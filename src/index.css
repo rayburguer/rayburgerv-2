@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+@theme {
+  --color-obsidian: #0A0A0A;
+  --color-flame: #FF4500;
+}
