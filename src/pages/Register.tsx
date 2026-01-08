@@ -99,7 +99,7 @@ export function Register() {
                     <h1 className="text-3xl font-black text-white tracking-tight">
                         RAY<span className="text-flame">BURGER</span>
                     </h1>
-                    <p className="text-gray-400 mt-2">Crea tu cuenta</p>
+                    <p className="text-gray-400 mt-2">Registro Oficial v2</p>
                 </div>
 
                 {/* Benefits Banner */}
