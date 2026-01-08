@@ -1,4 +1,5 @@
 import { useState } from 'react';
+// Vercel Trigger: Forcing update for Birth Date field
 import { useNavigate } from 'react-router-dom';
 import { Lock, User, AlertCircle, CheckCircle, Gift, Mail } from 'lucide-react';
 import { supabase } from '../api/supabase';
