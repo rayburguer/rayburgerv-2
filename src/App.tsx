@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 // Vercel Redeploy Trigger: Ferrari Module Fully Integrated
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { Menu } from './pages/Menu';
 import { Header } from './components/Header';
 import { CartSidebar } from './components/CartSidebar';

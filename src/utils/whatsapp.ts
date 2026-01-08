@@ -41,7 +41,6 @@ export const generateWhatsAppMessage = (
 };
 
 export const openWhatsApp = (phone: string, message: string) => {
-    // RayBurger Number (Example) - Replace with real one if provided
-    const RAYBURGER_PHONE = '584121234567';
-    window.open(`https://wa.me/${RAYBURGER_PHONE}?text=${message}`, '_blank');
+    const cleanPhone = phone.replace(/[^0-9]/g, '');
+    window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
 };
