@@ -173,7 +173,7 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                                         return text;
                                     }).join('\n\n');
 
-                                    const fullMessage = `Hola RayBurger, quiero pedir:\n\n${message}\n\n*Total: $${total.toFixed(2)}*\n\n---\n\n*DATOS DE PAGO:*\nBanco: Mercantil / Venezuela\nPago Móvil: 0412-834-4594\nC.I: 13.412.781`;
+                                    const fullMessage = `Hola RayBurger, quiero pedir:\n\n${message}\n\n*Total: $${total.toFixed(2)}*\n\n---\n\n*Enviado desde mi Billetera RayBurger 🍔📱*\n*DATOS DE PAGO:*\nBanco: Mercantil / Venezuela\nPago Móvil: 0412-834-4594\nC.I: 13.412.781`;
                                     window.open(`https://wa.me/584128344594?text=${encodeURIComponent(fullMessage)}`, '_blank');
                                 }}
                                 className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-3.5 rounded-xl shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2"

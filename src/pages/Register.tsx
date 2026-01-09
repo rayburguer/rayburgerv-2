@@ -15,6 +15,7 @@ export function Register() {
         birthDate: '',
         password: '',
         confirmPassword: '',
+        referredByPhone: '',
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -58,6 +59,26 @@ export function Register() {
             const fullName = formData.fullName.trim();
             const phone = formData.phone.trim();
             const birthDate = formData.birthDate;
+            const referredByPhone = formData.referredByPhone.trim();
+
+            let referrerId = null;
+
+            // Resolve Referrer ID if phone provided
+            if (referredByPhone) {
+                console.log('Resolving referrer for:', referredByPhone);
+                const { data: refId, error: refError } = await supabase
+                    .rpc('get_referrer_id_by_phone', { phone_number: referredByPhone });
+
+                if (refError) {
+                    console.error('Error resolving referrer:', refError);
+                    // No bloqueamos el registro, solo logueamos
+                } else if (refId) {
+                    referrerId = refId;
+                    console.log('Referrer resolved:', referrerId);
+                } else {
+                    console.warn('Referrer not found for phone:', referredByPhone);
+                }
+            }
 
             console.log('Attempting registration for:', email);
 
@@ -70,6 +91,8 @@ export function Register() {
                         full_name: fullName,
                         phone: phone,
                         birth_date: birthDate,
+                        referral_phone: referredByPhone, // Guardamos el telefono por si acaso
+                        referred_by: referrerId // El UUID resuelto
                     }
                 }
             });
@@ -175,6 +198,21 @@ export function Register() {
                     </div>
 
                     <div className="space-y-2">
+                        <label className="text-sm font-bold text-gray-300 ml-1">¿Quién te invitó? (Opcional)</label>
+                        <div className="relative">
+                            <Gift className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
+                            <input
+                                type="tel"
+                                value={formData.referredByPhone}
+                                onChange={(e) => setFormData({ ...formData, referredByPhone: e.target.value })}
+                                className="w-full bg-black/40 border border-white/10 rounded-xl py-3 pl-10 pr-4 text-white focus:outline-none focus:border-flame focus:ring-1 focus:ring-flame transition-all"
+                                placeholder="Teléfono de tu amigo"
+                            />
+                        </div>
+                        <p className="text-xs text-gray-500 ml-1">Si tienes un padrino, ingresa su teléfono aquí.</p>
+                    </div>
+
+                    <div className="space-y-2">
                         <label className="text-sm font-bold text-gray-300 ml-1">Contraseña</label>
                         <div className="relative">
                             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
@@ -215,6 +253,7 @@ export function Register() {
                         ) : (
                             <>
                                 <CheckCircle size={20} />
+                                <CheckCircle size={20} className="hidden" /> {/* Hack to keep lucide import used if needed, or just remove hidden instance */}
                                 Crear Cuenta
                             </>
                         )}

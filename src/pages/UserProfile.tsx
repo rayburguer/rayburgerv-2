@@ -47,22 +47,6 @@ export function UserProfile() {
     const cashbackRate = getCashbackRate(level);
     const levelName = getLevelName(level);
 
-    // Calculate progress to next level
-    let nextLevelThreshold = 100;
-    let nextLevelName = 'Plata';
-    let amountNeeded = 100 - totalSpent;
-    let progressPercent = (totalSpent / nextLevelThreshold) * 100;
-
-    if (level === 2) {
-        nextLevelThreshold = 500;
-        nextLevelName = 'Oro';
-        amountNeeded = 500 - totalSpent;
-        progressPercent = ((totalSpent - 100) / 400) * 100;
-    } else if (level === 3) {
-        progressPercent = 100; // Max level
-        amountNeeded = 0;
-    }
-
     return (
         <div className="min-h-screen bg-obsidian text-white p-4 pb-20">
             {/* Header */}
@@ -126,30 +110,40 @@ export function UserProfile() {
 
                     {/* Progress Bar */}
                     {level < 3 ? (
-                        <div>
-                            <div className="flex justify-between text-xs text-gray-400 mb-2">
-                                <span>Progreso a Nivel {nextLevelName}</span>
-                                <span>${nextLevelThreshold}</span>
-                            </div>
-                            <div className="w-full bg-black/40 rounded-full h-4 overflow-hidden mb-3">
-                                <div
-                                    className="bg-linear-to-r from-flame to-red-600 h-full transition-all duration-500 flex items-center justify-end pr-2"
-                                    style={{ width: `${Math.min(progressPercent, 100)}%` }}
-                                >
-                                    {progressPercent > 10 && (
-                                        <span className="text-xs font-bold text-white">{Math.round(progressPercent)}%</span>
-                                    )}
+                        <div className="mt-6 bg-black/40 rounded-xl p-4 border border-white/5">
+                            <div className="flex justify-between items-end mb-2">
+                                <div>
+                                    <p className="text-sm text-gray-400">Nivel Actual</p>
+                                    <p className="text-xl font-black text-white">
+                                        {profile.level === 1 ? 'HUNGRY 🍔' :
+                                            profile.level === 2 ? 'BURGER LOVER 🍟' :
+                                                profile.level === 3 ? 'MASTER 👑' : 'ROOKIE'}
+                                    </p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-sm text-gray-400">Puntos Totales</p>
+                                    <p className="text-flame font-bold">{(profile.total_spent || 0).toFixed(2)} pts</p>
                                 </div>
                             </div>
-                            <div className="bg-black/40 rounded-lg p-3">
-                                <p className="text-sm text-gray-300">
-                                    💰 <strong className="text-white">Te faltan ${amountNeeded.toFixed(2)}</strong> para alcanzar <strong className="text-flame">Nivel {nextLevelName}</strong>
-                                </p>
-                                <p className="text-xs text-gray-500 mt-1">
-                                    {level === 1 && 'Sube a Plata y gana 5% de cashback'}
-                                    {level === 2 && 'Sube a Oro y gana 8% de cashback'}
-                                </p>
+
+                            {/* Progress Bar */}
+                            <div className="w-full bg-gray-700 rounded-full h-4 mb-2 overflow-hidden relative">
+                                <div
+                                    className="bg-gradient-to-r from-flame to-yellow-500 h-4 rounded-full transition-all duration-1000 ease-out"
+                                    style={{ width: `${Math.min(100, ((profile.total_spent || 0) / (profile.level === 1 ? 200 : profile.level === 2 ? 500 : 1000)) * 100)}%` }}
+                                ></div>
                             </div>
+
+                            {/* Dopamine Message */}
+                            <p className="text-xs text-center mt-2 font-medium">
+                                {(profile.total_spent || 0) === 0 ? (
+                                    <span className="text-yellow-400 animate-pulse font-bold">¡Estás a solo una Burger de ser Burger Lover! 🍔🚀</span>
+                                ) : (
+                                    <span className="text-green-400">
+                                        ¡Sigue comiendo para desbloquear más Cashback!
+                                    </span>
+                                )}
+                            </p>
                         </div>
                     ) : (
                         <div className="bg-linear-to-r from-yellow-500/20 to-yellow-600/10 border border-yellow-500/30 rounded-lg p-4 text-center">
