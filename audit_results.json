@@ -1,0 +1,44 @@
+{
+  "profiles": {
+    "has_wallet_balance": true,
+    "has_points": true,
+    "has_role": true,
+    "all_keys": [
+      "id",
+      "phone",
+      "role",
+      "full_name",
+      "birth_date",
+      "is_verified",
+      "created_at",
+      "wallet_balance",
+      "points",
+      "referred_by",
+      "first_name",
+      "last_name",
+      "total_spent",
+      "user_level",
+      "email",
+      "referral_code",
+      "membership_level"
+    ]
+  },
+  "products": {
+    "has_is_archived": true,
+    "has_is_active": true,
+    "has_is_available": true,
+    "all_keys": [
+      "id",
+      "name",
+      "description",
+      "price_usd",
+      "category",
+      "image_url",
+      "is_active",
+      "is_archived",
+      "created_at",
+      "category_id",
+      "is_available"
+    ]
+  }
+}

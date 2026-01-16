@@ -19,8 +19,93 @@
   }
 }
 
+
+html,
+body {
+  height: 100%;
+  overscroll-behavior: none;
+  /* Previene el efecto "rebote" (rubber-banding) */
+  -webkit-tap-highlight-color: transparent;
+  /* Quita el highlight azul al tocar */
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+  /* Previene scroll horizontal accidental */
+}
+
+/* Utilities for PWA Safe Areas */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@keyframes bounce-slow {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 3s infinite;
+}
+
+@keyframes spin-burger {
+  0% {
+    transform: rotateY(0deg);
+  }
+
+  100% {
+    transform: rotateY(360deg);
+  }
+}
+
+.animate-spin-burger {
+  animation: spin-burger 2s linear infinite;
+  transform-style: preserve-3d;
+}
+
+/* BURGER POP DESIGN SYSTEM */
+.pop-shadow {
+  box-shadow: 4px 4px 0px 0px rgba(255, 255, 255, 0.2);
+}
+
+.pop-shadow-strong {
+  box-shadow: 5px 5px 0px 0px #000000;
+}
+
+.pop-shadow-amber {
+  box-shadow: 4px 4px 0px 0px #f59e0b;
+}
+
+.text-stroke-sm {
+  -webkit-text-stroke: 0.5px black;
+}
+
+@keyframes pop-in {
+  0% {
+    transform: scale(0.9) rotate(-2deg);
+    opacity: 0;
+  }
+
+  70% {
+    transform: scale(1.05) rotate(1deg);
+  }
+
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.animate-pop-in {
+  animation: pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
