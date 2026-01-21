@@ -576,8 +576,8 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
     return (
         <>
-            {isOpen && <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity" onClick={onClose} />}
-            <div className={`fixed top-0 right-0 h-full w-[90%] max-w-md bg-slate-950 border-l border-slate-800 shadow-2xl z-50 transform transition-transform duration-300 ease-out ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+            {isOpen && <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90] transition-opacity" onClick={onClose} />}
+            <div className={`fixed top-0 right-0 h-full w-[90%] max-w-md bg-slate-950 border-l border-slate-800 shadow-2xl z-[100] transform transition-transform duration-300 ease-out ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
                 <div className="flex flex-col h-full bg-slate-950">
                     {/* Header */}
                     <div className="flex items-center justify-between p-5 border-b border-slate-800 bg-slate-900/50 backdrop-blur-md">
