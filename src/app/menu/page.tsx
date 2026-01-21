@@ -3,7 +3,8 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import CartOverlay from '@/components/CartOverlay'
-import MenuAccordion from '@/components/MenuAccordion'
+
+
 import PromoCarousel from '@/components/PromoCarousel'
 import PurchasePowerCard from '@/components/PurchasePowerCard'
 import CategoryNav from '@/components/menu/CategoryNav'
@@ -81,6 +82,7 @@ export default async function MenuPage() {
                 {/* Feed de Productos */}
                 <ProductFeed products={products || []} />
             </main>
+
 
             {/* Cart Integration */}
             <CartOverlay />

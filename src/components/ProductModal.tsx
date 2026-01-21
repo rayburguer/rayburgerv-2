@@ -222,8 +222,7 @@ export default function ProductModal({ product, isOpen, onClose, onAddToCart }: 
 
                 </div>
 
-                {/* Footer Action */}
-                <div className="p-6 bg-slate-950 border-t border-slate-800">
+                <div className="p-6 pb-24 sm:pb-6 bg-slate-950 border-t border-slate-800">
                     <button
                         onClick={handleAdd}
                         className="w-full bg-linear-to-r from-amber-600 to-orange-600 hover:to-orange-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-orange-900/20 active:scale-[0.98] transition-all flex items-center justify-between px-6"
