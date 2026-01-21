@@ -47,7 +47,7 @@ export default async function AdminDashboardPage() {
     }
 
     return (
-        <div className="space-y-8 pb-10">
+        <div className="space-y-8 pb-24">
             {/* KPI GRID (Nuevo V4) */}
             <AdminStatsGrid stats={kpiData} />
 
@@ -104,9 +104,102 @@ export default async function AdminDashboardPage() {
                 </div>
             </div>
 
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+            {/* VISTA MÓVIL (CARDS) */}
+            <div className="grid gap-4 md:hidden">
+                {orders?.map((order: any) => {
+                    const waLink = getWhatsAppLink(order.customer_phone)
+                    const hasDebt = (order.amount_paid_real || 0) > 0
+                    const usedWallet = (order.total_order || 0) > (order.amount_paid_real || 0)
+
+                    return (
+                        <div key={order.order_id} className="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col gap-4 relative overflow-hidden">
+                            {/* Cabecera: ID y Estado */}
+                            <div className="flex justify-between items-start">
+                                <div className="flex flex-col">
+                                    <span className="font-mono text-slate-300 font-bold text-sm">#{order.order_id?.substring(0, 8)}</span>
+                                    <span className="text-slate-500 text-xs">{new Date(order.created_at).toLocaleString('es-VE', { hour: '2-digit', minute: '2-digit' })}</span>
+                                </div>
+                                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold border uppercase tracking-wide ${order.status === 'completed' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' :
+                                    order.status === 'paid' ? 'bg-green-500/10 text-green-500 border-green-500/20' :
+                                        'bg-amber-500/10 text-amber-500 border-amber-500/20'
+                                    }`}>
+                                    {order.status}
+                                </span>
+                            </div>
+
+                            {/* Cliente */}
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 font-bold">
+                                    {order.customer_name?.[0] || '?'}
+                                </div>
+                                <div>
+                                    <p className="text-white font-medium text-sm">{order.customer_name || 'Anónimo'}</p>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-slate-500 text-xs font-mono">{order.customer_phone || 'Sin tel'}</span>
+                                        {order.customer_phone && (
+                                            <a href={waLink} target="_blank" rel="noopener noreferrer" className="text-green-500">
+                                                <MessageCircle className="w-4 h-4" />
+                                            </a>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Info Financiera (Total Real) */}
+                            <div className="bg-slate-950/50 rounded-lg p-3 flex justify-between items-center border border-slate-800/50">
+                                <span className="text-slate-400 text-xs font-bold uppercase">Total Real</span>
+                                <div className="flex flex-col items-end">
+                                    <span className="font-bold text-white text-lg">${Number(order.amount_paid_real || 0).toFixed(2)}</span>
+                                    {usedWallet && (
+                                        <span className="text-[10px] text-amber-500 font-bold uppercase tracking-wide">
+                                            Saldo Usado
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Acciones Grandes */}
+                            <div className="grid grid-cols-2 gap-3">
+                                {/* Botón 1: Reporte Pago */}
+                                {order.payment_proof_url ? (
+                                    <a href={order.payment_proof_url} target="_blank" className="flex items-center justify-center gap-2 px-3 py-3 bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-xl font-bold text-xs hover:bg-purple-500/20 transition-colors">
+                                        <FileText className="w-4 h-4" />
+                                        Ver Capture
+                                    </a>
+                                ) : order.payment_ref ? (
+                                    <div className="flex items-center justify-center gap-2 px-3 py-3 bg-slate-800 text-slate-300 border border-slate-700 rounded-xl font-bold text-xs">
+                                        <Smartphone className="w-4 h-4 text-slate-500" />
+                                        Ref: {order.payment_ref}
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center justify-center gap-2 px-3 py-3 bg-slate-800/50 text-slate-500 border border-slate-800 rounded-xl font-bold text-xs">
+                                        Sin Reporte
+                                    </div>
+                                )}
+
+                                {/* Botón 2: Detalles */}
+                                <Link href={`/admin/orders/${order.order_id}`} className="flex items-center justify-center gap-2 px-3 py-3 bg-amber-500 text-slate-900 rounded-xl font-bold text-xs hover:bg-amber-400 transition-colors shadow-lg shadow-amber-900/20">
+                                    <Eye className="w-4 h-4" />
+                                    Ver Detalles
+                                </Link>
+                            </div>
+                        </div>
+                    )
+                })}
+
+                {/* Empty State Mobile */}
+                {(!orders || orders.length === 0) && (
+                    <div className="flex flex-col items-center justify-center p-8 bg-slate-900 border border-slate-800 rounded-xl text-slate-500 gap-2">
+                        <CheckCircle2 className="w-8 h-8 opacity-20" />
+                        <p>No hay pedidos pendientes.</p>
+                    </div>
+                )}
+            </div>
+
+            {/* VISTA ESCRITORIO (TABLA) */}
+            <div className="hidden md:block bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
+                    <table className="hidden md:table w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-slate-950/50 border-b border-slate-800 text-slate-400 text-xs uppercase tracking-wider">
                                 <th className="p-4 font-medium">ID / Fecha</th>
@@ -193,7 +286,7 @@ export default async function AdminDashboardPage() {
                                         <td className="p-4 text-center">
                                             <Link
                                                 href={`/admin/orders/${order.order_id}`}
-                                                className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-amber-500 text-slate-950 hover:bg-amber-400 hover:scale-110 transition-all shadow-lg shadow-amber-900/20"
+                                                className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-amber-500 text-slate-900 hover:bg-amber-400 hover:scale-110 transition-all shadow-lg shadow-amber-900/20"
                                             >
                                                 <Eye className="w-4 h-4" />
                                             </Link>

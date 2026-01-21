@@ -48,6 +48,10 @@ export default function FAQButton() {
                                 answer="Es dinero real en tu billetera digital. Proviene de tus Cashbacks o recargas. Úsalo para pagar tus próximos pedidos sin tocar tu cuenta bancaria."
                             />
                             <FAQItem
+                                question="¿Cómo reclamo mis premios del Raspadito?"
+                                answer="¡Es fácil! 1. Haz un pedido. 2. Raspa el ticket digital. 3. Si ganas, muestra la pantalla a nuestro cajero o envía el capture por WhatsApp si es Delivery. ¡Nosotros te lo activamos al instante!"
+                            />
+                            <FAQItem
                                 question="¿Hacen delivery a toda la ciudad?"
                                 answer="Cubrimos Zonas 1, 2 y 3. Al pagar, selecciona tu zona y el sistema calculará el costo automáticamente."
                             />

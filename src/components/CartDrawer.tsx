@@ -104,7 +104,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     const PAGO_MOVIL = {
         banco: '0102 - Venezuela',
         telefono: '04128344594',
-        cedula: 'V-20556102'
+        cedula: 'V-13412781'
     }
 
     const handleCopy = (text: string) => {
@@ -141,9 +141,24 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             })
 
             if (result.success && result.orderId) {
+                // Generar Mensaje de WhatsApp
+                const text = generateWhatsAppMessage({
+                    orderId: result.orderId,
+                    items: cartItems,
+                    total: displayTotal,
+                    deliveryType,
+                    reference: reference || (paymentProof ? 'Capture Subido' : 'Saldo Favor/Pendiente'),
+                    customerName: !isAuthenticated ? guestName : 'Usuario Registrado'
+                })
+
+                // Redirigir a WhatsApp
+                // Numero del Admin (Tomado de PAGO_MOVIL constant o config)
+                const ADMIN_PHONE = '584128344594'
+                window.open(`https://wa.me/${ADMIN_PHONE}?text=${encodeURIComponent(text)}`, '_blank')
+
                 clearCart()
                 onClose()
-                alert('¡Recibido! Estamos verificando tu pago para liberar tus puntos y enviar tu pedido. 🚀')
+                // alert('¡Recibido! Estamos verificando tu pago para liberar tus puntos y enviar tu pedido. 🚀') // Alert redundante si ya abrimos WA
                 router.push(`/order-confirmation/${result.orderId}`)
             } else {
                 alert('Error al crear el pedido: ' + (result.error || 'Desconocido'))
@@ -599,6 +614,27 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             </div>
         </>
     )
+}
+
+
+function generateWhatsAppMessage({ orderId, items, total, deliveryType, reference, customerName }: any) {
+    let message = `¡Hola! Quiero confirmar mi pedido *#${orderId.slice(0, 6).toUpperCase()}* 🍔\n`
+    message += `--------------------------------\n`
+
+    items.forEach((item: any) => {
+        message += `${item.quantity}x ${item.name}\n`
+        if (item.customization?.modifiers?.length > 0) {
+            message += `   (${item.customization.modifiers.join(', ')})\n`
+        }
+    })
+
+    message += `--------------------------------\n`
+    message += `💰 *Total: $${total.toFixed(2)}*\n`
+    // message += `📍 Entrega: ${deliveryType === 'delivery' ? 'Delivery' : 'Pick-up'}\n`
+    message += `💳 Ref: ${reference}\n`
+    if (customerName) message += `👤 Cliente: ${customerName}\n`
+
+    return message
 }
 
 function ArrowRightIcon() {

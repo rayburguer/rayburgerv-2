@@ -22,15 +22,14 @@ export default function CartOverlay() {
             {/* Floating Action Button (FAB) */}
             <button
                 onClick={() => setIsOpen(true)}
-                className="fixed bottom-6 right-6 z-30 w-16 h-16 md:w-20 md:h-20 bg-linear-to-tr from-yellow-400 via-orange-500 to-red-600 rounded-full shadow-[0_10px_40px_-10px_rgba(249,115,22,0.6)] flex items-center justify-center text-white hover:scale-110 active:scale-95 transition-all duration-300 group border-4 border-slate-900/50"
+                className={`fixed bottom-24 right-4 md:bottom-8 md:right-8 z-50 w-14 h-14 md:w-20 md:h-20 bg-amber-500 rounded-full shadow-lg pop-shadow-strong flex items-center justify-center text-slate-900 hover:scale-110 active:scale-95 transition-all duration-300 border-2 border-slate-900 ${totalItems === 0 ? 'hidden md:flex' : 'flex'}`}
                 aria-label="Ver Carrito"
             >
-                <div className="absolute inset-0 bg-white/20 rounded-full opacity-0 hover:opacity-100 transition-opacity"></div>
-                <ShoppingBag className="w-8 h-8 md:w-10 md:h-10 drop-shadow-xl relative z-10" />
+                <ShoppingBag className="w-7 h-7 md:w-9 md:h-9" />
 
                 {/* Badge */}
                 {totalItems > 0 && (
-                    <div className="absolute -top-1 -right-1 bg-white text-red-600 text-xs md:text-sm font-black w-7 h-7 rounded-full flex items-center justify-center border-2 border-red-600 shadow-lg animate-bounce z-20">
+                    <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center border-2 border-slate-900">
                         {totalItems}
                     </div>
                 )}

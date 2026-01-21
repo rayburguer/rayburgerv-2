@@ -28,7 +28,6 @@ export default function AdminMarketingPage() {
         if (error) {
             alert('Error: ' + error.message)
         } else {
-            console.log("Users fetched:", data)
             setUsers(data || [])
         }
         setLoading(false)
@@ -79,8 +78,8 @@ export default function AdminMarketingPage() {
                             key={level}
                             onClick={() => setFilterLevel(level.toLowerCase())}
                             className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${filterLevel === level.toLowerCase()
-                                    ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/20'
-                                    : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white'
+                                ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/20'
+                                : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white'
                                 }`}
                         >
                             {level}
@@ -140,8 +139,8 @@ export default function AdminMarketingPage() {
                                 <div key={user.id} className="flex items-center justify-between bg-slate-800/50 p-3 rounded-xl hover:bg-slate-800 transition-colors group">
                                     <div className="flex items-center gap-3">
                                         <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ${user.user_level === 'Oro' ? 'bg-yellow-500/20 text-yellow-500' :
-                                                user.user_level === 'Plata' ? 'bg-slate-400/20 text-slate-300' :
-                                                    'bg-amber-700/20 text-amber-600'
+                                            user.user_level === 'Plata' ? 'bg-slate-400/20 text-slate-300' :
+                                                'bg-amber-700/20 text-amber-600'
                                             }`}>
                                             {user.user_level?.[0] || 'B'}
                                         </div>

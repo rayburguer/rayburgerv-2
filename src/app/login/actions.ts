@@ -22,8 +22,13 @@ export async function login(formData: FormData) {
         return { error: error.message }
     }
 
+    const redirectTo = formData.get('redirectTo') as string || '/menu'
+
+    // Validate redirect to prevent open redirect vulnerabilities (basic check)
+    const validRedirect = redirectTo.startsWith('/') ? redirectTo : '/menu'
+
     revalidatePath('/', 'layout')
-    redirect('/menu') // Assuming /menu is the main authenticated area
+    redirect(validRedirect)
 }
 
 export async function signup(formData: FormData) {
@@ -33,6 +38,7 @@ export async function signup(formData: FormData) {
     const password = formData.get('password') as string
     const fullName = formData.get('fullName') as string
     const referrerPhone = formData.get('referrerPhone') as string || null
+    const redirectTo = formData.get('redirectTo') as string || '/menu'
 
     // Masquerading: Convert phone to fake email
     const email = `${phone.replace(/\D/g, '')}@rayburger.local`
@@ -61,6 +67,7 @@ export async function signup(formData: FormData) {
         })
     }
 
+    const validRedirect = redirectTo.startsWith('/') ? redirectTo : '/menu'
     revalidatePath('/', 'layout')
-    redirect('/menu')
+    redirect(validRedirect)
 }

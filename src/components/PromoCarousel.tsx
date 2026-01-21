@@ -38,7 +38,7 @@ export default function PromoCarousel() {
     }, [])
 
     return (
-        <div className="relative w-full aspect-21/9 md:aspect-3/1 overflow-hidden rounded-2xl shadow-2xl mb-8 group">
+        <div className="relative w-full h-[45vh] md:h-[50vh] overflow-hidden rounded-b-3xl md:rounded-3xl shadow-2xl mb-6 group">
             {PROMOS.map((promo, idx) => (
                 <div
                     key={promo.id}
@@ -54,39 +54,42 @@ export default function PromoCarousel() {
                         priority={idx === 0}
                     />
 
-                    {/* Gradient Overlay */}
-                    <div className={`absolute inset-0 bg-linear-to-r ${promo.color} opacity-80 mix-blend-multiply`} />
-                    <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent" />
+                    {/* Gradient Overlay (Cinematic Bottom Fade) */}
+                    <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-slate-950/60 to-transparent" />
 
                     {/* Content */}
-                    <div className="absolute inset-0 flex flex-col justify-center px-6 md:px-12 max-w-2xl">
-                        <span className="inline-block py-1 px-3 rounded-full bg-white/20 text-white text-xs font-bold backdrop-blur-md mb-2 w-fit border border-white/10">
+                    <div className="absolute bottom-0 left-0 w-full p-8 md:p-12 flex flex-col items-start pb-16">
+                        <span className="inline-block py-1 px-3 rounded-full bg-amber-500 text-slate-900 text-[10px] font-black tracking-widest uppercase mb-3 shadow-lg shadow-amber-500/20">
                             DESTACADO
                         </span>
-                        <h2 className="text-3xl md:text-5xl font-black text-white mb-2 leading-tight drop-shadow-lg">
+                        <h2 className="text-4xl md:text-6xl font-black text-white mb-2 leading-none drop-shadow-xl tracking-tight">
                             {promo.title}
                         </h2>
-                        <p className="text-slate-200 text-sm md:text-lg mb-6 font-medium drop-shadow-md max-w-md">
+                        <p className="text-slate-300 text-sm md:text-lg mb-6 font-medium max-w-md drop-shadow-md line-clamp-2">
                             {promo.subtitle}
                         </p>
                         <Link
                             href={promo.link}
-                            className="w-fit bg-white text-slate-900 px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:scale-105 transition-transform shadow-lg active:scale-95"
+                            className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-8 py-3 rounded-full font-bold flex items-center gap-2 hover:bg-amber-500 hover:text-slate-900 hover:border-amber-500 transition-all shadow-lg active:scale-95 group/btn"
                         >
-                            {promo.action} <ChevronRight className="w-4 h-4" />
+                            {promo.action} <ChevronRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
                         </Link>
                     </div>
                 </div>
             ))}
 
-            {/* Indicators */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+            {/* Indicators (Instagram Stories Style) */}
+            <div className="absolute top-4 left-0 w-full px-4 flex gap-2 z-30">
                 {PROMOS.map((_, idx) => (
                     <button
                         key={idx}
                         onClick={() => setCurrent(idx)}
-                        className={`w-2 h-2 rounded-full transition-all ${idx === current ? 'bg-white w-6' : 'bg-white/40 hover:bg-white/60'}`}
-                    />
+                        className="h-1 flex-1 rounded-full overflow-hidden bg-white/20"
+                    >
+                        <div
+                            className={`h-full bg-white transition-all duration-5000 ease-linear ${idx === current ? 'w-full' : 'w-0'}`}
+                        />
+                    </button>
                 ))}
             </div>
         </div>

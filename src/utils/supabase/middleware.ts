@@ -45,16 +45,19 @@ export async function updateSession(request: NextRequest) {
         }
 
         // 2. Verificar Rol Admin en DB
-        const { data: profile } = await supabase
+        const { data: profile, error: profileError } = await supabase
             .from('profiles')
             .select('role')
             .eq('id', user.id)
             .single()
 
-        if (profile?.role !== 'admin') {
-            console.warn(`⛔ Acceso denegado a /admin para: ${user.email} (Rol: ${profile?.role})`)
+        if (profileError || profile?.role !== 'admin') {
+            // Log de seguridad (Advertencia)
+            console.warn(`⛔ Intento de acceso no autorizado a /admin: ${user.email} (Rol detectado: ${profile?.role || 'None'})`)
+
             const url = request.nextUrl.clone()
-            url.pathname = '/menu'
+            url.pathname = '/login'
+            url.searchParams.set('error', 'Acceso denegado: Área restringida.')
             return NextResponse.redirect(url)
         }
     }

@@ -100,6 +100,9 @@ function LoginForm() {
                             </div>
                         )}
 
+                        {/* Hidden Redirect for Smart Navigation */}
+                        <input type="hidden" name="redirectTo" value={searchParams.get('redirect') || '/menu'} />
+
                         <div className="space-y-2">
                             <label className="text-xs font-semibold text-slate-400 ml-1 uppercase">Teléfono</label>
                             <div className="relative">

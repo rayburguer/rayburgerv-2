@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
-import { UserCircle, Wallet, LogOut, Phone, Crown, History, Trophy, Gift, ShoppingBag, LayoutDashboard, ChevronRight, Star } from 'lucide-react'
+import { UserCircle, Wallet, LogOut, Phone, Crown, History, Trophy, Gift, ShoppingBag, LayoutDashboard, ChevronRight, Star, Users, Settings } from 'lucide-react'
 import Link from 'next/link'
 import OrderHistoryList from '@/components/OrderHistoryList'
 import Navbar from '@/components/Navbar'
@@ -80,7 +80,7 @@ export default async function ProfilePage() {
 
     // CORRECCIÓN CRÍTICA: Usamos los campos calculados por el Backend
     // "El Frontend solo debe reflejar lo que dicen las Vistas"
-    const progressPercent = progress?.porcentaje_progreso_nivel || 0
+    const progressPercent = progress?.porcentaje_progreso || 0
     const missingForNext = progress?.falta_para_siguiente_nivel || 0
     const pointsForFreeBurger = progress?.puntos_para_burger_gratis || 0
 
@@ -101,223 +101,233 @@ export default async function ProfilePage() {
     const shareLink = `https://wa.me/?text=${encodeURIComponent(waText)}`
 
     return (
-        <div className="min-h-screen bg-slate-950 pb-24">
+
+        <div className="min-h-screen bg-slate-950 pb-24 font-sans selection:bg-amber-500/30">
             <div className="hidden md:block">
                 <Navbar />
             </div>
-            {/* Header / Identity */}
-            <div className="bg-slate-900 border-b border-slate-800 p-6 rounded-b-4xl shadow-2xl relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-amber-600 via-orange-500 to-amber-600" />
 
-                <div className="flex flex-col items-center relative z-10">
-                    <div className="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mb-4 ring-4 ring-slate-800 shadow-xl">
-                        <UserCircle className="w-10 h-10 text-slate-400" />
-                    </div>
-                    <h1 className="text-xl font-bold text-white mb-1">{fullName}</h1>
-                    <div className={`px-3 py-1 rounded-full text-xs font-bold border flex items-center gap-1 ${levelBg} ${levelColor} mb-6`}>
-                        <Crown className="w-3 h-3" />
-                        NIVEL {userLevel.toUpperCase()}
-                    </div>
+            {/* HERO SECTION: Fintech Premium Card */}
+            <div className="relative pt-8 px-4 pb-20 overflow-hidden">
+                {/* Background Glows */}
+                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-amber-500/20 blur-[120px] rounded-full pointer-events-none" />
+                <div className="absolute top-[20%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 blur-[100px] rounded-full pointer-events-none" />
 
-                    {/* Wallet Main Card (Gold Member Edition) */}
-                    <div className="w-full max-w-sm relative group perspective-1000 mb-6">
-                        <div className="bg-linear-to-br from-slate-900 to-slate-950 rounded-2xl p-6 border border-slate-800 shadow-2xl relative overflow-hidden transition-transform transform hover:scale-[1.02] duration-300">
-                            {/* Texture */}
-                            <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] mix-blend-overlay"></div>
+                <div className="relative z-10 max-w-md mx-auto space-y-6">
 
-                            {/* Gold/Level Gradient Overlay */}
-                            <div className={`absolute inset-0 opacity-10 ${userLevel === 'Oro' ? 'bg-yellow-500' :
-                                userLevel === 'Plata' ? 'bg-slate-300' : 'bg-amber-700'
-                                }`}></div>
-
-                            <div className="relative z-10 flex flex-col justify-between h-full min-h-[160px]">
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Saldo Disponible</p>
-                                        <h2 className="text-4xl xs:text-5xl font-black text-white tracking-tighter drop-shadow-lg filter truncate max-w-[200px] xs:max-w-none">
-                                            ${Number(walletBalance).toFixed(2)}
-                                        </h2>
-                                    </div>
-                                    <div className="flex flex-col items-end">
-                                        <div className={`w-12 h-9 rounded-md bg-linear-to-br from-yellow-200 to-yellow-500 border border-yellow-400 shadow-inner relative overflow-hidden hidden xs:block opacity-90 mb-2`}>
-                                            <div className="absolute left-0 top-1/2 w-full h-px bg-black/20"></div>
-                                            <div className="absolute top-0 left-1/2 h-full w-px bg-black/20"></div>
-                                            <div className="absolute inset-0 border-[3px] border-yellow-600/30 rounded-md"></div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="flex justify-between items-end mt-6">
-                                    <div className="flex flex-col">
-                                        <p className="text-[9px] text-slate-500 uppercase tracking-wider mb-0.5">MIEMBRO OFICIAL</p>
-                                        <p className="text-sm text-slate-200 font-mono tracking-widest font-bold">
-                                            {user?.id.slice(0, 4).toUpperCase()} • {userLevel.toUpperCase()}
-                                        </p>
-                                    </div>
-                                    <div className="flex items-center gap-1 bg-amber-500/20 px-3 py-1 rounded-full border border-amber-500/30">
-                                        <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
-                                        <span className="text-[10px] font-bold text-amber-500 uppercase tracking-tight">VIP</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Benefits Grid (Points & Referrals) */}
-                    <div className="grid grid-cols-2 gap-4 mb-6 w-full max-w-sm">
-                        <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl flex flex-col items-center justify-center text-center">
-                            <span className="text-xs text-slate-400 font-bold uppercase mb-1">Mis Puntos</span>
-                            <div className="text-2xl font-black text-amber-500 flex items-center gap-1">
-                                <Trophy className="w-5 h-5" /> {points}
-                            </div>
-                            <Link href="/menu" className="mt-2 text-[10px] bg-amber-500 text-slate-900 px-2 py-0.5 rounded font-bold hover:bg-amber-400 transition-colors">
-                                CANJEAR BURGERS
-                            </Link>
-                        </div>
-
-                        <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl flex flex-col items-center justify-center text-center">
-                            <span className="text-xs text-slate-400 font-bold uppercase mb-1">Ganado x Amigos</span>
-                            <div className="text-2xl font-black text-green-500 flex items-center gap-1">
-                                <Wallet className="w-5 h-5" />
-                                ${(transactions || [])
-                                    .filter(t => t.description?.toLowerCase().includes('referido'))
-                                    .reduce((sum, t) => sum + (Number(t.amount) || 0), 0)
-                                    .toFixed(2)}
-                            </div>
-                            <a href={shareLink} target="_blank" className="mt-2 text-[10px] bg-green-600 text-white px-2 py-0.5 rounded font-bold hover:bg-green-500 transition-colors">
-                                INVITAR MÁS
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Admin Access Panel (Mobile/Desktop Entry) */}
-            {(profile?.role === 'admin' || profile?.role === 'superadmin') && (
-                <div className="max-w-md mx-auto px-6 pt-6 animate-in slide-in-from-bottom-4">
-                    <Link href="/admin" className="w-full bg-slate-800 hover:bg-slate-700 text-white p-4 rounded-xl flex items-center justify-between group transition-all border border-slate-700 shadow-lg">
+                    {/* Header Minimal */}
+                    <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-3">
-                            <div className="bg-purple-500/10 p-2 rounded-lg text-purple-500">
-                                <LayoutDashboard className="w-6 h-6" />
+                            <div className="w-10 h-10 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center shadow-lg">
+                                <UserCircle className="w-6 h-6 text-slate-400" />
                             </div>
-                            <div className="text-left">
-                                <h3 className="font-bold text-sm">Panel de Control</h3>
-                                <p className="text-xs text-slate-400">Acceso Administrativo</p>
+                            <div>
+                                <h1 className="text-sm font-bold text-white leading-tight">{fullName}</h1>
+                                <span className="text-[10px] text-slate-500 font-mono tracking-wider uppercase">ID: {user?.id.slice(0, 4).toUpperCase()}</span>
                             </div>
                         </div>
-                        <ChevronRight className="w-5 h-5 text-slate-500 group-hover:text-white" />
-                    </Link>
-                </div>
-            )}
-
-            <div className="max-w-md mx-auto p-6 space-y-6">
-
-                {/* Gamification / Progress */}
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
-                    <div className="flex justify-between items-end mb-2">
-                        <h3 className="text-white font-bold text-sm">Próximo Nivel</h3>
-                        <span className="text-amber-500 text-xs font-mono">{progressPercent}%</span>
+                        <div className={`px-3 py-1.5 rounded-full text-[10px] font-black tracking-widest border flex items-center gap-1.5 shadow-[0_0_15px_-5px_currentColor] ${levelBg} ${levelColor}`}>
+                            <Crown className="w-3 h-3" />
+                            {userLevel.toUpperCase()}
+                        </div>
                     </div>
 
-                    <div className="h-3 w-full bg-slate-800 rounded-full overflow-hidden mb-3">
-                        <div
-                            className="h-full bg-linear-to-r from-amber-500 to-orange-600 transition-all duration-1000 ease-out"
-                            style={{ width: `${progressPercent}%` }}
-                        />
-                    </div>
+                    {/* MAIN CARD: Points & Balance */}
+                    <div className="w-full relative group perspective-1000">
+                        <div className="bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 rounded-[2.5rem] p-8 border border-slate-700/50 shadow-2xl relative overflow-hidden ring-1 ring-white/5">
 
-                    {/* Texto dinámico directo de la vista */}
-                    {missingForNext > 0 ? (
-                        <p className="text-slate-400 text-xs text-center">
-                            {progress?.falta_para_siguiente_nivel}
-                            {/* Fallback si la vista no devuelve texto formateado, aunque el usuario dijo que "es texto dinámico" 
-                                Si es numérico, lo mostramos como número. Asumiendo que v_user_progress devuelve el TEXTO o el NUMERO y nosotros formateamos.
-                                El usuario dijo: "Texto dinámico 'Te faltan $X para ser Nivel...'". 
-                                PERO la vista que diseñé antes devolvía un numero. 
-                                El usuario: "Úsalos directamente para la barra y los textos."
-                                Si la vista devuelve un numero (monto), hago el texto aquí. 
-                                Si la vista devuelve el texto, lo uso directo.
-                                Voy a asumir que devuelve el número (como diseñé en specs) y yo pongo el texto, 
-                                O si el usuario cambió la vista para devolver texto, esto podría romper.
-                                Me arriesgaré a formatear yo el número "missingForNext" que viene de la vista. */}
-                            Te faltan <span className="text-white font-bold">${missingForNext}</span> para subir de nivel.
-                        </p>
-                    ) : (
-                        <div className="text-center">
-                            <p className="text-amber-400 text-xs font-bold mb-2">¡Felicidades! Eres Nivel Oro.</p>
-                        </div>
-                    )}
+                            {/* Card Texture */}
+                            <div className="absolute inset-0 opacity-30 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] mix-blend-overlay"></div>
 
-                    {/* Burger Gratis Check */}
-                    {pointsForFreeBurger === 0 && (
-                        <div className="mt-4 pt-4 border-t border-slate-800 text-center animate-pulse">
-                            <button className="w-full py-2 bg-linear-to-r from-yellow-600 to-amber-600 text-white text-xs font-bold rounded-lg flex items-center justify-center gap-2">
-                                <Gift className="w-4 h-4" /> ¡Reclamar Burger Gratis!
-                            </button>
-                        </div>
-                    )}
-                </div>
+                            <div className="relative z-10 flex flex-col items-center text-center">
+                                <span className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-2 text-shadow-sm">Mis Puntos</span>
 
-                {/* Orders History & Feedback */}
-                <div>
-                    <h3 className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-4 flex items-center gap-2">
-                        <ShoppingBag className="w-4 h-4" /> Mis Pedidos
-                    </h3>
-                    <OrderHistoryList orders={orders} />
-                </div>
-
-                {/* Transaction History */}
-                <div>
-                    <h3 className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-4 flex items-center gap-2">
-                        <History className="w-4 h-4" /> Actividad Reciente
-                    </h3>
-
-                    <div className="space-y-3">
-                        {transactions && transactions.length > 0 ? (
-                            transactions.map((tx) => (
-                                <div key={tx.id} className="bg-slate-900/50 border border-slate-800 p-4 rounded-xl flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${tx.amount >= 0 ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'
-                                            }`}>
-                                            {tx.amount >= 0 ? <PlusIcon /> : <MinusIcon />}
-                                        </div>
-                                        <div>
-                                            <p className="text-white text-sm font-medium">{tx.description || 'Transacción'}</p>
-                                            <p className="text-slate-500 text-xs">
-                                                {new Date(tx.created_at).toLocaleDateString()}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <span className={`font-mono font-bold ${tx.amount >= 0 ? 'text-green-400' : 'text-white'
-                                        }`}>
-                                        {tx.amount >= 0 ? '+' : ''}${Math.abs(tx.amount).toFixed(2)}
-                                    </span>
+                                {/* PUNTOS GIGANTES CON BRILLO */}
+                                <div className="relative">
+                                    <div className="absolute inset-0 bg-amber-400 blur-2xl opacity-20 rounded-full"></div>
+                                    <h2 className="text-6xl font-black text-transparent bg-clip-text bg-linear-to-r from-amber-200 via-amber-400 to-yellow-600 tracking-tighter drop-shadow-2xl scale-100 transform transition-transform group-hover:scale-105 duration-500">
+                                        {points}
+                                    </h2>
                                 </div>
-                            ))
-                        ) : (
-                            <div className="text-center p-8 border border-dashed border-slate-800 rounded-xl">
-                                <p className="text-slate-500 text-sm">Sin movimientos recientes</p>
+
+                                <p className="text-slate-500 text-xs font-medium mt-2">≈ ${(points / 1000).toFixed(2)} USD en valor canjeable</p>
+
+                                {/* Billetera Secundaria */}
+                                <div className="mt-6 flex items-center gap-2 bg-slate-950/50 px-4 py-2 rounded-xl border border-white/5 backdrop-blur-md">
+                                    <Wallet className="w-4 h-4 text-emerald-400" />
+                                    <span className="text-slate-300 text-sm font-medium">Saldo Wallet:</span>
+                                    <span className="text-white text-sm font-bold font-mono">${Number(walletBalance).toFixed(2)}</span>
+                                </div>
                             </div>
+                        </div>
+                    </div>
+
+                    {/* GAMIFICATION BAR: Enhanced */}
+                    <div className="bg-slate-900/80 border border-slate-800/80 rounded-2xl p-5 shadow-lg backdrop-blur-sm">
+                        <div className="flex justify-between items-center mb-3">
+                            <span className="text-xs font-bold text-slate-300 tracking-wide">Progreso a {userLevel === 'Oro' ? 'DIAMANTE' : userLevel === 'Plata' ? 'ORO' : 'PLATA'}</span>
+                            <span className="text-amber-500 text-xs font-black font-mono bg-amber-500/10 px-2 py-0.5 rounded">{progressPercent}%</span>
+                        </div>
+                        <div className="h-4 w-full bg-slate-950 rounded-full overflow-hidden shadow-inner relative">
+                            {/* Background Stripes */}
+                            <div className="absolute inset-0 opacity-10 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.1)_25%,rgba(255,255,255,0.1)_50%,transparent_50%,transparent_75%,rgba(255,255,255,0.1)_75%,rgba(255,255,255,0.1)_100%)] bg-size-[20px_20px]"></div>
+                            <div
+                                className="h-full bg-linear-to-r from-amber-600 via-orange-500 to-yellow-400 shadow-[0_0_20px_rgba(245,158,11,0.5)] transition-all duration-1000 ease-out relative"
+                                style={{ width: `${progressPercent}%` }}
+                            >
+                                <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+                            </div>
+                        </div>
+                        <p className="text-center mt-3 text-xs text-slate-400 font-medium flex items-center justify-center gap-1.5">
+                            <Trophy className="w-3 h-3 text-amber-500" />
+                            {missingForNext > 0
+                                ? <span>¡Estás a <strong className="text-white">${missingForNext}</strong> del siguiente nivel!</span>
+                                : <span className="text-amber-400 font-bold">¡Nivel Máximo Alcanzado!</span>
+                            }
+                        </p>
+                    </div>
+
+                    {/* 2x2 ACTION GRID */}
+                    <div className="grid grid-cols-2 gap-3">
+                        {/* Botón 1: Canjear */}
+                        <Link href="/menu" className="group bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-amber-500/50 p-4 rounded-2xl flex flex-col items-center justify-center gap-2 transition-all shadow-lg hover:shadow-amber-500/10 active:scale-95">
+                            <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <Gift className="w-5 h-5" />
+                            </div>
+                            <span className="text-xs font-bold text-slate-200 group-hover:text-white">Canjear Burger</span>
+                        </Link>
+
+                        {/* Botón 2: Invitar */}
+                        <a href={shareLink} target="_blank" className="group bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-green-500/50 p-4 rounded-2xl flex flex-col items-center justify-center gap-2 transition-all shadow-lg hover:shadow-green-500/10 active:scale-95">
+                            <div className="w-10 h-10 rounded-xl bg-green-500/10 text-green-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <Users className="w-5 h-5" />
+                            </div>
+                            <span className="text-xs font-bold text-slate-200 group-hover:text-white">Invitar Amigos</span>
+                        </a>
+
+                        {/* Botón 3: Admin (Condicional) o Historial */}
+                        {(profile?.role === 'admin' || profile?.role === 'superadmin') ? (
+                            <Link href="/admin" className="group bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-purple-500/50 p-4 rounded-2xl flex flex-col items-center justify-center gap-2 transition-all shadow-lg hover:shadow-purple-500/10 active:scale-95 col-span-2">
+                                <div className="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <LayoutDashboard className="w-5 h-5" />
+                                </div>
+                                <span className="text-xs font-bold text-slate-200 group-hover:text-white">Panel de Control (Admin)</span>
+                            </Link>
+                        ) : (
+                            <button className="group bg-slate-900 hover:bg-slate-800 border border-slate-800 p-4 rounded-2xl flex flex-col items-center justify-center gap-2 transition-all active:scale-95 opacity-50 cursor-not-allowed">
+                                <div className="w-10 h-10 rounded-xl bg-slate-800 text-slate-500 flex items-center justify-center">
+                                    <Settings className="w-5 h-5" />
+                                </div>
+                                <span className="text-xs font-bold text-slate-500">Ajustes</span>
+                            </button>
                         )}
                     </div>
                 </div>
 
-                {/* Logout */}
-                <form action={signOut} className="pt-8">
-                    <button
-                        type="submit"
-                        className="w-full flex items-center justify-center gap-2 text-slate-500 hover:text-red-400 text-sm transition-colors"
-                    >
-                        <LogOut className="w-4 h-4" />
-                        Cerrar Sesión Segura
-                    </button>
-                </form>
+                {/* WINNINGS: Active Rewards */}
+                <div className="max-w-md mx-auto mt-8 px-2">
+                    <h3 className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-4 flex items-center gap-2 px-2">
+                        <Gift className="w-4 h-4 text-amber-500" /> Mis Premios (Raspaditos)
+                    </h3>
 
+                    {/* Fetch Logic for Rewards (Inline for simplicity in Server Component) */}
+                    {/* Note: Ideally this should be up top, but we inject here for rapid fix */}
+                    {(async () => {
+                        const { data: rewards } = await supabase
+                            .from('user_rewards')
+                            .select('*')
+                            .eq('user_id', user.id)
+                            .order('created_at', { ascending: false })
+
+                        if (!rewards || rewards.length === 0) {
+                            return (
+                                <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-6 text-center text-slate-500 text-xs">
+                                    No tienes premios activos. ¡Pide y gana!
+                                </div>
+                            )
+                        }
+
+                        return (
+                            <div className="space-y-3">
+                                {rewards.map((reward: any) => (
+                                    <div key={reward.id} className="bg-linear-to-r from-amber-900/20 to-slate-900 border border-amber-500/30 rounded-xl p-4 flex items-center gap-4 relative overflow-hidden group">
+                                        <div className="absolute inset-0 bg-amber-500/5 group-hover:bg-amber-500/10 transition-colors" />
+
+                                        <div className="w-12 h-12 bg-amber-500/20 rounded-full flex items-center justify-center border border-amber-500/50 z-10">
+                                            {reward.prize_icon === 'burger' && <span className="text-2xl">🍔</span>}
+                                            {reward.prize_icon === 'hotdog' && <span className="text-2xl">🌭</span>}
+                                            {reward.prize_icon === 'soda' && <span className="text-2xl">🥤</span>}
+                                            {reward.prize_icon === 'moto' && <span className="text-2xl">🛵</span>}
+                                            {reward.prize_icon === 'coins' && <span className="text-2xl">💰</span>}
+                                            {reward.prize_icon === 'users' && <span className="text-2xl">👥</span>}
+                                            {reward.prize_icon === 'sad' && <span className="text-2xl">😢</span>}
+                                        </div>
+
+                                        <div className="flex-1 z-10">
+                                            <h4 className="text-amber-200 font-bold text-sm">{reward.prize_title}</h4>
+                                            <p className="text-amber-500/60 text-xs font-mono mt-1">{reward.prize_code}</p>
+                                            <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded border mt-2 inline-block ${reward.status === 'active' ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-slate-800 text-slate-500 border-slate-700'
+                                                }`}>
+                                                {reward.status === 'active' ? 'DISPONIBLE' : reward.status}
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )
+                    })()}
+                </div>
+
+                {/* TICKET STYLE HISTORY */}
+                <div className="max-w-md mx-auto mt-8">
+                    <h3 className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-4 flex items-center gap-2 px-2">
+                        <History className="w-4 h-4" /> Historial Reciente
+                    </h3>
+
+                    <div className="space-y-4">
+                        {orders?.map((order: any) => (
+                            <div key={order.id} className="relative group">
+                                {/* Ticket Notch Left */}
+                                <div className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-slate-950 rounded-full z-10"></div>
+                                {/* Ticket Notch Right */}
+                                <div className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-slate-950 rounded-full z-10"></div>
+
+                                <div className="bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-lg p-5 flex items-center justify-between shadow-md transition-colors">
+                                    <div className="flex flex-col gap-1 pl-2">
+                                        <span className="text-white font-bold text-sm">Pedido #{order.id.slice(0, 6)}</span>
+                                        <span className="text-slate-500 text-xs">{new Date(order.created_at).toLocaleDateString()}</span>
+                                    </div>
+                                    <div className="flex flex-col items-end pr-2">
+                                        <span className="text-lg font-black text-white">${Number(order.total_amount).toFixed(2)}</span>
+                                        <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border ${order.status === 'completed' ? 'text-emerald-400 border-emerald-500/20 bg-emerald-500/10' :
+                                            order.status === 'cancelled' ? 'text-red-400 border-red-500/20 bg-red-500/10' :
+                                                'text-amber-400 border-amber-500/20 bg-amber-500/10'
+                                            }`}>
+                                            {order.status}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Logout */}
+                <div className="max-w-md mx-auto mt-12 px-6">
+                    <form action={signOut}>
+                        <button
+                            type="submit"
+                            className="w-full flex items-center justify-center gap-2 text-slate-500 hover:text-red-400 text-sm font-medium transition-colors p-4 rounded-xl hover:bg-red-500/5 group"
+                        >
+                            <LogOut className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                            Cerrar Sesión Segura
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     )
 }
-
 function PlusIcon() {
     return <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
 }

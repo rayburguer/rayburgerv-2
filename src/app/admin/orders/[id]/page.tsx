@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Calendar, User, MessageCircle, Phone } from 'lucide-react'
 import OrderActions from './OrderActions'
+import AdminRedeemWidget from '@/components/admin/AdminRedeemWidget'
 
 interface PageProps {
     params: { id: string }
@@ -36,10 +37,19 @@ export default async function OrderDetailsPage({ params }: any) {
         amount_usd,
         reference_number,
         screenshot_url
+      ),
+      user_rewards (
+        id,
+        prize_title,
+        prize_code,
+        prize_icon,
+        status,
+        redeemed_at
       )
     `)
         .eq('id', id)
         .single()
+
 
     if (error || !order) {
         return (
@@ -51,13 +61,12 @@ export default async function OrderDetailsPage({ params }: any) {
     }
 
     // 2. Parse User Info
-    // Supabase might return an array or object depending on relationship definition.
     const profileData = order.profiles
     const profile = Array.isArray(profileData) ? profileData[0] : profileData
     const userName = profile?.full_name || 'Desconocido'
     const userPhone = profile?.phone || 'Sin teléfono'
 
-    // 3. WhatsApp Logic (Venezuela Spec: 0 -> 58)
+    // 3. WhatsApp Logic
     let waLink = '#'
     if (userPhone && userPhone.length > 5) {
         let clean = userPhone.replace(/\D/g, '')
@@ -65,6 +74,10 @@ export default async function OrderDetailsPage({ params }: any) {
         else if (!clean.startsWith('58')) clean = '58' + clean
         waLink = `https://wa.me/${clean}`
     }
+
+    // 4. Parse Reward
+    const rewardData = order.user_rewards
+    const reward = Array.isArray(rewardData) ? rewardData[0] : rewardData
 
     return (
         <div className="space-y-6 max-w-5xl mx-auto pb-20">
@@ -132,7 +145,7 @@ export default async function OrderDetailsPage({ params }: any) {
                                                         {mod}
                                                     </span>
                                                 ))}
-                                                {item.customization.finalPrice && item.customization.finalPrice > (item.unit_price * 1) && ( // Heurística simple para detectar sobreprecio
+                                                {item.customization.finalPrice && item.customization.finalPrice > (item.unit_price * 1) && (
                                                     <span className="text-[10px] text-slate-500 font-mono ml-1">
                                                         (Precio base modificado)
                                                     </span>
@@ -225,6 +238,12 @@ export default async function OrderDetailsPage({ params }: any) {
                     {/* Totals & Actions Card */}
                     <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-lg">
                         <h3 className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-4">Gestión del Pedido</h3>
+
+                        {/* REDEEM WIDGET (New) */}
+                        <div className="mb-6">
+                            <AdminRedeemWidget orderId={order.id} reward={reward} />
+                        </div>
+
 
                         <div className="space-y-3 mb-6 bg-slate-950/50 p-4 rounded-xl border border-slate-800/50">
                             <div className="flex justify-between text-slate-300">

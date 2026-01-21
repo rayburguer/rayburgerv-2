@@ -112,11 +112,18 @@ export default function ProductModal({ product, isOpen, onClose, onAddToCart }: 
     }
 
     return (
-        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200" onClick={onClose}>
-            <div className="bg-slate-900 border border-slate-800 w-full max-w-md rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[85vh]" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center sm:p-4 animate-in fade-in duration-200" onClick={onClose}>
+            <div
+                className="bg-slate-900 border-t border-x sm:border border-slate-800 w-full sm:max-w-md rounded-t-4xl sm:rounded-3xl overflow-hidden shadow-2xl flex flex-col h-[85vh] sm:h-auto sm:max-h-[85vh] animate-in slide-in-from-bottom duration-300"
+                onClick={e => e.stopPropagation()}
+            >
+                {/* Drag Handle (Visual Only) */}
+                <div className="w-full h-6 bg-slate-900 absolute top-0 left-0 right-0 z-10 flex items-center justify-center sm:hidden" onClick={onClose}>
+                    <div className="w-12 h-1.5 bg-slate-700 rounded-full" />
+                </div>
 
                 {/* Header Image */}
-                <div className="h-40 bg-slate-800 relative shrink-0">
+                <div className="h-48 sm:h-40 bg-slate-800 relative shrink-0 mt-2 sm:mt-0">
                     <img src={product.image_url} alt={product.name} className="w-full h-full object-cover opacity-80" />
                     <div className="absolute inset-0 bg-linear-to-t from-slate-900 via-transparent to-transparent" />
                     <button onClick={onClose} className="absolute top-4 right-4 bg-black/50 p-2 rounded-full text-white hover:bg-black/70 transition-colors">
@@ -143,8 +150,8 @@ export default function ProductModal({ product, isOpen, onClose, onAddToCart }: 
                                             key={mod.name}
                                             onClick={() => toggleModifier(mod.name)}
                                             className={`flex items-center gap-3 p-3 rounded-xl border transition-all text-sm font-medium ${isSelected
-                                                    ? 'bg-slate-800 border-slate-700 text-white'
-                                                    : 'bg-red-500/10 border-red-500/30 text-red-400 line-through opacity-70'
+                                                ? 'bg-slate-800 border-slate-700 text-white'
+                                                : 'bg-red-500/10 border-red-500/30 text-red-400 line-through opacity-70'
                                                 }`}
                                         >
                                             <div className={`w-5 h-5 rounded flex items-center justify-center border ${isSelected ? 'bg-green-500 border-green-500 text-slate-900' : 'border-slate-600'}`}>
@@ -170,8 +177,8 @@ export default function ProductModal({ product, isOpen, onClose, onAddToCart }: 
                                             key={mod.name}
                                             onClick={() => toggleModifier(mod.name)}
                                             className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all ${isSelected
-                                                    ? 'bg-amber-500/10 border-amber-500 text-amber-500'
-                                                    : 'bg-slate-800/50 border-slate-800 text-slate-400 hover:bg-slate-800'
+                                                ? 'bg-amber-500/10 border-amber-500 text-amber-500'
+                                                : 'bg-slate-800/50 border-slate-800 text-slate-400 hover:bg-slate-800'
                                                 }`}
                                         >
                                             <div className="flex items-center gap-3">
@@ -200,8 +207,8 @@ export default function ProductModal({ product, isOpen, onClose, onAddToCart }: 
                                             key={mod.name}
                                             onClick={() => toggleModifier(mod.name)}
                                             className={`w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all ${isSelected
-                                                    ? 'bg-purple-500/20 border-purple-500 text-white shadow-[0_0_20px_rgba(168,85,247,0.3)]'
-                                                    : 'bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-500'
+                                                ? 'bg-purple-500/20 border-purple-500 text-white shadow-[0_0_20px_rgba(168,85,247,0.3)]'
+                                                : 'bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-500'
                                                 }`}
                                         >
                                             <span className="font-bold text-lg">{mod.name}</span>

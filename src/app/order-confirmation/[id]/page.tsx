@@ -3,27 +3,22 @@ import { CheckCircle2, Send, ArrowRight, Store, Truck } from 'lucide-react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import ConfettiTrigger from '@/components/ConfettiTrigger'
+import RewardTrigger from '@/components/RewardTrigger'
 
 export const dynamic = 'force-dynamic'
 
-export default async function OrderConfirmationPage({ params }: { params: { id: string } }) {
+export default async function OrderConfirmationPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params
     const supabase = await createClient()
 
-    // 1. Fetch Order Details WITH Config (tasa)
-    const { data: order, error } = await supabase
-        .from('orders')
-        .select(`
-            *,
-            items:order_items(
-                quantity,
-                unit_price,
-                product:products(name),
-                customization
-            ),
-            user:profiles(email, full_name, phone)
-        `)
-        .eq('id', params.id)
-        .single()
+    // 1. Fetch Order Details SECURELY (via RPC for Guests)
+    // 1. Fetch Order Details SECURELY (via RPC for Guests)
+    const { data: orderResponse, error } = await supabase
+        .rpc('get_public_order_details', { p_order_id: id })
+
+    // El RPC devuelve un objeto con la estructura ya lista, pero puede venir null si no existe
+    // El RPC devuelve un objeto con la estructura ya lista
+    // const order = orderResponse as any (Moved below error check)
 
     // ... (rest of fetch logic calls)
 
@@ -33,7 +28,29 @@ export default async function OrderConfirmationPage({ params }: { params: { id: 
         .eq('id', 'main')
         .single()
 
-    if (error || !order) redirect('/menu')
+    // Debug Validation
+    if (error || !orderResponse) {
+        console.error('[OrderConfirmation] Load Error:', { error, paramsId: id })
+        return (
+            <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-8 text-center">
+                <div className="bg-red-900/10 p-6 rounded-2xl border border-red-500/20 max-w-md w-full">
+                    <h1 className="text-xl font-bold text-red-500 mb-2">Error al Cargar Pedido</h1>
+                    <p className="text-slate-400 text-sm mb-4">No pudimos encontrar la información de tu orden ({id}).</p>
+
+                    <div className="bg-black/30 p-3 rounded text-left font-mono text-[10px] text-red-300 overflow-auto max-h-32 mb-4">
+                        <p>RPC_ERROR: {error?.message || 'None'}</p>
+                        <p>DATA_STATUS: {orderResponse ? 'Exists' : 'NULL'}</p>
+                    </div>
+
+                    <Link href="/menu" className="block w-full bg-slate-800 text-white font-bold py-3 rounded-lg hover:bg-slate-700 transition-colors">
+                        Volver al Menú
+                    </Link>
+                </div>
+            </div>
+        )
+    }
+
+    const order = orderResponse as any
 
     const tasa = config ? parseFloat(config.value) : 0 // Fallback
     const totalBs = order.total_amount * tasa
@@ -101,6 +118,9 @@ Adjunto mi comprobante de pago. 📄`
                         <p className="text-slate-500 text-sm">Bs. {totalBs.toFixed(2)}</p>
                     </div>
                 </div>
+
+                {/* Interactive Reward (Modal Auto-Launch) */}
+                <RewardTrigger orderId={order.id} isGuest={!order.user_id} />
 
                 {/* Info Text */}
                 <div className="bg-blue-900/10 p-3 rounded-lg border border-blue-900/30 text-center">
