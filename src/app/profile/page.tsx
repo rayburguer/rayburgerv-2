@@ -100,6 +100,52 @@ export default async function ProfilePage() {
     const waText = `¡Pide en Ray Burger usando mi número ${contactPhone} como código de referido y ambos ganaremos premios! https://rayburger.app`
     const shareLink = `https://wa.me/?text=${encodeURIComponent(waText)}`
 
+    // --- ADMIN DASHBOARD LOGIC ---
+    if (profile?.role === 'admin' || profile?.role === 'superadmin') {
+        // 1. Sales Today
+        const today = new Date().toISOString().split('T')[0]
+        const { data: salesData } = await supabase
+            .from('orders')
+            .select('total_amount')
+            .gte('created_at', today)
+            .neq('status', 'cancelled')
+
+        const salesToday = salesData?.reduce((sum, order: any) => sum + Number(order.total_amount), 0) || 0
+
+        // 2. Pending Orders
+        const { count: pendingCount } = await supabase
+            .from('orders')
+            .select('*', { count: 'exact', head: true })
+            .in('status', ['pending', 'paying', 'preparing'])
+
+        // 3. Recent Activity (Latest 5 orders)
+        const { data: recentOrders } = await supabase
+            .from('orders')
+            .select('id, created_at, total_amount, status, profiles(full_name)')
+            .order('created_at', { ascending: false })
+            .limit(5)
+
+        const recentActivity = recentOrders?.map((o: any) => ({
+            text: `Pedido #${o.id.slice(0, 6)} - $${o.total_amount}`,
+            time: new Date(o.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            type: 'order'
+        })) || []
+
+        const AdminDashboard = (await import('@/components/admin/AdminDashboard')).default
+
+        return (
+            <>
+                <div className="hidden md:block"><Navbar /></div>
+                <div className="md:hidden"><AdminDashboard userName={fullName.split(' ')[0]} salesToday={salesToday} pendingOrdersCount={pendingCount || 0} recentActivity={recentActivity} /></div>
+                {/* Desktop fallback to regular dashboard or admin layout */}
+                <div className="hidden md:block">
+                    <AdminDashboard userName={fullName.split(' ')[0]} salesToday={salesToday} pendingOrdersCount={pendingCount || 0} recentActivity={recentActivity} />
+                </div>
+                {/* Mobile Nav is global in layout */}
+            </>
+        )
+    }
+
     return (
 
         <div className="min-h-screen bg-slate-950 pb-24 font-sans selection:bg-amber-500/30">
